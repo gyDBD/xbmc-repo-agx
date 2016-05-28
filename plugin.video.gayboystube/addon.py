@@ -14,7 +14,7 @@ import CommonFunctions
 import cookielib
 
 common = CommonFunctions
-common.plugin = "plugin.video.gayboystube-1.0.1"
+common.plugin = "plugin.video.gayboystube-1.0.2"
 cookiejar = cookielib.LWPCookieJar()
 cookie_handler = urllib2.HTTPCookieProcessor(cookiejar)
 opener = urllib2.build_opener(cookie_handler)
@@ -83,7 +83,8 @@ def indexVideos(path,page):
           name = common.makeAscii(common.replaceHTMLCodes(title[i]))
           addListItem(name=name, url=urllib.quote_plus(link2), mode='playVideo', iconimage=image[i], page=page, duration=length[i])
      nextpage = common.parseDOM(content, "a", attrs={"class": "next"}, ret="href")
-     addListItem(name="Go to next page", url=path, mode='scrapeVideoList', iconimage='DefaultFolder.png', page=nextpage[len(nextpage)-1])
+     if path != "random/":
+          addListItem(name="Go to next page", url=path, mode='scrapeVideoList', iconimage='DefaultFolder.png', page=nextpage[len(nextpage)-1])
 
 
 def playVideo(url,name,thumb):

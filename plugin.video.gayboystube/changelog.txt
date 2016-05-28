@@ -1,7 +1,13 @@
+v1.0.2
+
+there is no pagination on Random Videos and trying to paginate it caused the addon to crash.
+
+
 v1.0.1
 
 Website changes broke the regex. 
 Switched to parseDOM and removed BeautifulSoup
+
 
 v0.0.1
 
