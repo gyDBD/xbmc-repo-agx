@@ -1,3 +1,9 @@
+v1.0.1
+
+Website changes broke the regex. 
+Switched to parseDOM and removed BeautifulSoup
+
 v0.0.1
 
 Initial version. Some videos don't parse, most do. Pagination works.
+
