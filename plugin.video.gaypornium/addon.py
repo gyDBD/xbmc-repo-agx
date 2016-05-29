@@ -81,7 +81,7 @@ def playVideo(url,name,thumb):
     response = urllib2.urlopen(req)
     link=response.read()
     response.close()
-    match=re.compile('url: \'([A-Za-z0-9_/.:-?&=]*)\',').findall(link)
+    match=re.compile('file: \"([A-Za-z0-9_/.:-?&=]*)\",').findall(link)
     name=BeautifulSoup(urllib.unquote_plus(name), convertEntities=BeautifulSoup.HTML_ENTITIES).contents[0]
     for url in match:
         listitem = xbmcgui.ListItem(name)
