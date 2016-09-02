@@ -93,7 +93,7 @@ def playVideo(url,name,thumb):
     response = urllib2.urlopen(req)
     link=response.read()
     response.close()
-    match=re.compile('clip: {\r\n\s*url: \'([A-Za-z0-9_/.:-?&= _]*)\',').findall(link)
+    match=re.compile('file: \'([A-Za-z0-9_/.:-?&= _]*)\',').findall(link)
     for url in match:
         listitem = xbmcgui.ListItem(name)
         listitem.setInfo('video', {'Title': name, 'Genre': 'Porn'})
