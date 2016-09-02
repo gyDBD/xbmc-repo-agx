@@ -1,3 +1,8 @@
+v1.0.3
+
+fixed regex that extracts video URL due to site changes 2016-09-01
+
+
 v1.0.2
 
 there is no pagination on Random Videos and trying to paginate it caused the addon to crash.
