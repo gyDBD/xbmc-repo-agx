@@ -1,20 +1,25 @@
-v1.0.3
+v1.0.4
+added category listings
 
+known issues:
+parsedom chokes on invalid characters. need to replace parsedom with something more elegant
+this means some categories and or pages will cause the addon to crash occasionally
+i'll get around to replacing parsedom some other time for now it works well enough.
+
+
+v1.0.3
 fixed regex that extracts video URL due to site changes 2016-09-01
 
 
 v1.0.2
-
 there is no pagination on Random Videos and trying to paginate it caused the addon to crash.
 
 
 v1.0.1
-
-Website changes broke the regex. 
+Website changes broke the regex.
 Switched to parseDOM and removed BeautifulSoup
 
 
 v0.0.1
-
 Initial version. Some videos don't parse, most do. Pagination works.
 

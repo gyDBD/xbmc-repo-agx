@@ -13,8 +13,13 @@ import xbmcaddon
 import CommonFunctions
 import cookielib
 
+# addon constants
+version = "1.0.4"
+plugin = "gayboystube-" + version
+author = "agx"
+
 common = CommonFunctions
-common.plugin = "plugin.video.gayboystube-1.0.2"
+common.plugin = plugin
 cookiejar = cookielib.LWPCookieJar()
 cookie_handler = urllib2.HTTPCookieProcessor(cookiejar)
 opener = urllib2.build_opener(cookie_handler)
@@ -53,15 +58,19 @@ def displayRootMenu():
     addListItem('Top Favorites','top-favorites/','scrapeVideoList','DefaultFolder.png')
     addListItem('Most Viewed','most-viewed/','scrapeVideoList','DefaultFolder.png')
     addListItem('Most Commented','most-discussed/','scrapeVideoList','DefaultFolder.png')
-    # todo: channels; search
+    addListItem('Categories','channels/','scrapeChannels','DefaultFolder.png','?')
+    # todo: search
 
 
-def addListItem(name,url,mode,iconimage,page="page1.html",duration=0):
+def addListItem(name,url,mode,iconimage,page="page1.html",duration=0,channel=None):
     u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&thumb="+urllib.quote_plus(iconimage)+"&page="+urllib.quote_plus(page)
     ok=True
     if mode=='scrapeVideoList':
         liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
+    elif mode=='scrapeChannels':
+        liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+        ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     elif mode=='playVideo':
         liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
         liz.setInfo( type="Video", infoLabels={ "Title": name, "duration": duration } )
@@ -69,11 +78,27 @@ def addListItem(name,url,mode,iconimage,page="page1.html",duration=0):
     return ok
 
 
+def indexChannels(path):
+    result = common.fetchPage({"link": base_url + path})
+    if result["status"] != 200:
+        xbmc.log("error retrieving channels")
+    content = result["content"]
+    items = common.parseDOM(content, "div", attrs = {"class": "item categories"})
+    categoryLink = common.parseDOM(items, "a", attrs = {"class": "title"}, ret="href")
+    categoryImage = common.parseDOM(items, "img", ret="src")
+    categoryName = common.parseDOM(items, "img", ret="alt")
+    for i, enumeratedCategoryLink in enumerate(categoryLink):
+        sanitizedCategoryName = common.makeAscii(common.replaceHTMLCodes(categoryName[i]))
+        match = re.compile('(?P<path>channels/.*/)page').findall(enumeratedCategoryLink)
+        addListItem(name=sanitizedCategoryName, url=urllib.quote_plus(match[0]), mode='scrapeVideoList', iconimage=categoryImage[i])
+
+
 def indexVideos(path,page):
-     result = common.fetchPage({"link": base_url + path + page})
-     if result["status"] != 200:
-          print "bad url passed to function indexVideos"
-     content = result["content"]
+     #result = common.fetchPage({"link": base_url + path + page})
+     #if result["status"] != 200:
+     #     xbmc.log("bad url passed to function indexVideos")
+     #content = result["content"]
+     content = opener.open(base_url+path+page).read()
      items = common.parseDOM(content, "div", attrs = {"class": "item"})
      link = common.parseDOM(items, "a", attrs = {"class": ""}, ret="href")
      image = common.parseDOM(items, "img", ret="src")
@@ -98,7 +123,7 @@ def playVideo(url,name,thumb):
         listitem = xbmcgui.ListItem(name)
         listitem.setInfo('video', {'Title': name, 'Genre': 'Porn'})
         listitem.setThumbnailImage(urllib.unquote_plus(thumb))
-       	xbmc.Player().play(url, listitem)
+        xbmc.Player().play(url, listitem)
 
 
 # initialize variables
@@ -155,5 +180,9 @@ elif mode=='scrapeVideoList':
 elif mode=='playVideo':
     print ""+url
     playVideo(url,name,thumb)
+
+elif mode=='scrapeChannels':
+    print ""+url
+    indexChannels(url)
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
