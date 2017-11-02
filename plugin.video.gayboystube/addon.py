@@ -103,15 +103,20 @@ def indexVideos(path,page):
      link = common.parseDOM(items, "a", attrs = {"class": ""}, ret="href")
      image = common.parseDOM(items, "img", ret="src")
      title = common.parseDOM(items, "img", ret="alt")
-     length = common.parseDOM(items, "div", attrs = {"class": "duration"})
+     length = common.parseDOM(items, "span", attrs = {"class": "inline-duration"})
      print length
      for l, lenx in enumerate(length):
           #print "idx: %d" % l
-          #print "len: %s" % len
+          #print "len: %s" % lenx
           length[l] = sum(int(x) * 60 ** y for y, x in enumerate(reversed(length[l].split(":"))))
      print length
      for i, link2 in enumerate(link):
           name = common.makeAscii(common.replaceHTMLCodes(title[i]))
+          print "name: %s" % name
+          print "link: %s" % link2
+          print "image: %s" % image[i]
+          print "page: %s" % page
+          print "length: %s" % length[i]
           addListItem(name=name, url=urllib.quote_plus(link2), mode='playVideo', iconimage=image[i], page=page, duration=length[i])
      nextpage = common.parseDOM(content, "a", attrs={"class": "next"}, ret="href")
      if path != "random/":
